@@ -1,9 +1,9 @@
 clear
-addpath('C:\Users\marti\Documents\SQIP\Simulation\MathieuIonTrajectory\v2\');
+addpath('..\functions\');
 rf_vals = 120;%50:10:180; %MHz
 ions = {'Ca','Ca','Ca'};
 
-settings.multipole_file = 'C:\Users\marti\Documents\SQIP\Simulation\MathieuIonTrajectory\v2\MultipoleExpansion\multipoles_harmonic.mat';
+settings.multipole_file = '..\multipoles\multipoles_harmonic.mat';
 load(settings.multipole_file)
 settings.rf_multipoles = multipoles;
 %multipole_file = 'MultipoleExpansion\multipoles_harmonic.mat';
