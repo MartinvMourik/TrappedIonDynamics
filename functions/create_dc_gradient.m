@@ -1,6 +1,4 @@
 function [ dc ] = create_dc_gradient( position,field,curvatures,center)
-%CREATE_DC_POTENTIAL Summary of this function goes here
-%   Detailed explanation goes here
     X = position(1) - center(1);
     Y = position(2) - center(2);
     Z = position(3) - center(3);

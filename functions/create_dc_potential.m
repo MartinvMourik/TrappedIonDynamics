@@ -1,6 +1,4 @@
 function [ dc_potential ] = create_dc_potential( X,Y,Z,field,curvatures,center)
-%CREATE_DC_POTENTIAL Summary of this function goes here
-%   Detailed explanation goes here
     X = X - center(1);
     Y = Y - center(2);
     Z = Z - center(3);

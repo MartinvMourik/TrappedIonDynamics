@@ -1,6 +1,4 @@
 function [ rf_min ] = find_rf_min( X,Y,Z,rf_potential )
-%FIND_RF_MIN Summary of this function goes here
-%   Detailed explanation goes here
 rf_size = size(rf_potential);
 Xf = (min(X(:))+max(X(:)))/2;
 Yf = linspace(min(Y(:)),max(Y(:)),200);

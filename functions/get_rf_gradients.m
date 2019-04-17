@@ -1,6 +1,5 @@
 function [ gradients ] = get_rf_gradients(position,multipole_terms )
-%GET_RF_GRADIENTS Summary of this function goes here
-%   Detailed explanation goes here
+
 x = position(1);
 y = position(2);
 z = position(3);
@@ -84,8 +83,6 @@ E(24,3) = -6*x*y*z;
 E(25,1) = 0;
 E(25,2) = 4*(y^3 - 3*y*z^2);
 E(25,3) = 4*z*(-3*y^2 + z^2);
-
-%E([1:8,10:25],:)=0;
 
 gradients = E'*multipole_terms;
 end

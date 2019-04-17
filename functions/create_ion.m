@@ -21,6 +21,6 @@ elseif strcmp(type,'Sr')
     ion_object.wavelength = 422e-9;
     ion_object.laser_vec = [1,.1,1];
 else
-    display('Incorrect ion type')
+    disp('Incorrect ion type')
     ion_object = [];
 end
