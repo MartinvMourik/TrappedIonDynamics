@@ -11,7 +11,9 @@ damping = zeros(no_of_ions,3);
 force = zeros(no_of_ions,3);
 
 for i = 1:no_of_ions
-    coulomb(i,:) = get_coulomb_force(positions,i,settings.ions);
+    if settings.coulomb == 1
+        coulomb(i,:) = get_coulomb_force(positions,i,settings.ions);
+    end
     dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,settings.curvatures,settings.min_point);
     rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
     if settings.precool && settings.precool_time > t
@@ -20,7 +22,7 @@ for i = 1:no_of_ions
         damping(i,:) = get_damp_forces(velocities(:,i),settings.ions(i));
     end
 end    
-rf = rf*settings.rf_voltage*cos(2*pi*settings.rf_frequency*t);
+rf = rf*settings.rf_voltage*cos(2*pi*settings.rf_frequency*t + settings.rf_phase);
 etot = -dc - rf;
 for i = 1:no_of_ions
     force(i,:) = etot(i,:) * settings.ions(i).q / settings.ions(i).m...

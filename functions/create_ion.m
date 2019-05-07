@@ -9,7 +9,7 @@ if strcmp(type,'Ca')
     ion_object.start_pos = [-.002,0,-1.75e-6]*1e-3;
     ion_object.start_vel = [0,0,0];
     ion_object.wavelength = 397e-9;
-    ion_object.laser_vec = [1,.1,1];
+    ion_object.laser_vec = [1,1,.1];
 elseif strcmp(type,'Sr')
     ion_object.q = 1.60217662e-19;
     ion_object.m = 1.67e-27*88;
@@ -20,6 +20,16 @@ elseif strcmp(type,'Sr')
     ion_object.start_vel = [0,0,0];
     ion_object.wavelength = 422e-9;
     ion_object.laser_vec = [1,.1,1];
+elseif strcmp(type,'Al')
+    ion_object.q = 1.60217662e-19;
+    ion_object.m = 1.67e-27*27;
+    ion_object.gamma = 0; % Spontaneous decay rate
+    ion_object.coupling = 0;
+    ion_object.detuning = 0;
+    ion_object.start_pos = [.002,0,-1.75e-6]*1e-3;
+    ion_object.start_vel = [0,0,0];
+    ion_object.wavelength = 1;
+    ion_object.laser_vec = [1,0,0];
 else
     disp('Incorrect ion type')
     ion_object = [];
