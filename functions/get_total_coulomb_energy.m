@@ -28,4 +28,4 @@ else
         end
     end
 end
-coulomb_potential = coulomb_potential';
+coulomb_potential = coulomb_potential'/2;
