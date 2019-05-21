@@ -1,7 +1,7 @@
 clear
 addpath('..\functions\');
-rf_vals = 120;%50:10:180; %MHz
-ions = {'Ca','Ca','Ca'};
+rf_vals = 10:20:200; %MHz
+ions = {'Ca','Ca'};
 
 settings.multipole_file = '..\multipoles\multipoles_harmonic.mat';
 load(settings.multipole_file)
@@ -28,7 +28,7 @@ for i = 1:length(ions)
     settings.ions(i).start_pos(1) = ion_positions(i);
     settings.ions(i).start_pos(2) = settings.min_point(2);
     settings.ions(i).start_pos(3) = settings.min_point(3);
-    settings.ions(i).coupling = 25*2*pi*1e6;
+    settings.ions(i).coupling = 50*2*pi*1e6;
     settings.ions(i).detuning = -40*2*pi*1e6;
 end
 settings.ions(1).start_vel = [1,.2,.1]*60; % Gives the ion an instantaneous kick

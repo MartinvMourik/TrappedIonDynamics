@@ -14,7 +14,13 @@ for i = 1:no_of_ions
     if settings.coulomb == 1
         coulomb(i,:) = get_coulomb_force(positions,i,settings.ions);
     end
-    dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,settings.curvatures,settings.min_point);
+    
+    if isfield(settings,'curvatures_lims')
+        curvatures = (settings.curvatures_lims(2,:)-settings.curvatures_lims(1,:))/settings.duration*t + settings.curvatures_lims(1,:);
+    else
+        curvatures = settings.curvatures;
+    end
+    dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
     rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
     if settings.precool && settings.precool_time > t
         damping(i,:) = -settings.ions(i).m*transpose(settings.precool_str.*velocities(:,i));
