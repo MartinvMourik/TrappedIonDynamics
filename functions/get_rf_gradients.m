@@ -3,10 +3,10 @@ function [ gradients ] = get_rf_gradients(position,multipole_terms )
 x = position(1);
 y = position(2);
 z = position(3);
-
+E = zeros(25,3);
 E(1,1) = 0;
 E(1,2) = 0;
-E(1,2) = 0;
+E(1,3) = 0;
 
 E(2,1) = 0;
 E(2,2) = 0;
