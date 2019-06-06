@@ -1,5 +1,6 @@
-function coulomb_potential = get_total_coulomb_energy(positions,ion_settings)
+function coulomb_potential = get_total_coulomb_energy(positions,settings,smoothing)
 eps = 8.854e-12;
+ion_settings = settings.ions;
 no_of_ions = length(ion_settings);
 if length(size(positions)) == 3
     coulomb_potential = zeros(1,length(positions));
@@ -29,3 +30,6 @@ else
     end
 end
 coulomb_potential = coulomb_potential'/2;
+if smoothing
+    coulomb_potential = smooth(coulomb_potential,round(2/settings.rf_frequency/settings.time_step));
+end

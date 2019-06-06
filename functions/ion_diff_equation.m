@@ -21,7 +21,13 @@ for i = 1:no_of_ions
         curvatures = settings.curvatures;
     end
     dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
-    rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
+    
+    if strcmp(settings.rf_type,'multipoles')
+        rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
+    elseif strcmp(settings.rf_type,'surface')
+        rf(i,:) = surf_trap_gradient(settings.rail_dimensions,positions(:,i));
+    end
+    
     if settings.precool && settings.precool_time > t
         damping(i,:) = -settings.ions(i).m*transpose(settings.precool_str.*velocities(:,i));
     else

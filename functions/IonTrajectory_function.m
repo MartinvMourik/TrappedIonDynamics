@@ -13,5 +13,6 @@ end
 
 tic
 diff_eq = @(t,x) ion_diff_equation(x,t,settings);
-[t,y] = ode113(diff_eq,[0:settings.time_step:settings.duration],start_vec(:));
+options = odeset('RelTol',1e-5,'AbsTol',1e-7);
+[t,y] = ode113(diff_eq,0:settings.time_step:settings.duration,start_vec(:),options);
 toc
