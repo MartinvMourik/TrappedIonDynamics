@@ -10,10 +10,10 @@ function [ dc_potential ] = create_dc_potential( X,Y,Z,field,curvatures,center)
     dc_potentialm(:,2) = field(2)*Y;
     dc_potentialm(:,3) = field(3)*Z;
     dc_potentialm(:,4) = curvatures(1)*(Y.*Z);
-    dc_potentialm(:,5) = curvatures(2)*(Z.*X);
+    dc_potentialm(:,5) = curvatures(2)*(X.*Y);
     dc_potentialm(:,6) = curvatures(3)*(2*X.^2 - Y.^2 - Z.^2);
-    dc_potentialm(:,7) = curvatures(4)*(Y.*X);
-    dc_potentialm(:,8) = curvatures(5)*(Y.^2 - Z.^2);
+    dc_potentialm(:,7) = curvatures(4)*(X.*Z);
+    dc_potentialm(:,8) = curvatures(5)*(Z.^2 - Y.^2);
     dc_potential = sum(dc_potentialm,2);
     dc_potential = reshape(dc_potential,grid_size);
 end

@@ -11,6 +11,7 @@ for i = 1:length(settings.ions)
 end
 
 
+
 tic
 diff_eq = @(t,x) ion_diff_equation(x,t,settings);
 options = odeset('RelTol',1e-5,'AbsTol',1e-7);

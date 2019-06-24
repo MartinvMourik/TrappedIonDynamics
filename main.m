@@ -1,8 +1,9 @@
 clear
 addpath('functions\');
+addpath('surface electrodes\');
 
 % Select ion chain
-ions = {'Sr'};
+ions = {'Ca','Ca','Ca','Ca'};
 
 % Choose how the RF potential is generated.
 % 'multipole' uses a basis of spherical harmonics
@@ -14,40 +15,47 @@ ions = {'Sr'};
 % For 'surface': define the widths of the electrode rails:
 % [space between rails, width rail 1, width rail 2];
 
-settings.rf_type = 'surface';
-if strcmp(settings.rf_type,'multipoles')
+settings.potential_type = 'surface'; %'multipoles' or 'surface'
+if strcmp(settings.potential_type,'multipoles')
     settings.multipole_file = 'multipoles\multipoles_harmonic.mat';
     load(settings.multipole_file)
     settings.rf_multipoles = multipoles;
-elseif strcmp(settings.rf_type,'surface')
-    settings.rail_dimensions = [100e-6,50e-6,50e-6];
+elseif strcmp(settings.potential_type,'surface')
+    load('surface electrodes\rf_electrode_positions.mat')
+    load('surface electrodes\dc_electrode_positions.mat')
+    settings.rail_dimensions = rf_electrodes;
+    settings.dc_electrode_positions = electrode_positions;
 end
 
 
 % The following settings need to be set
 settings.coulomb = 1; %Boolean. Turn coulomb potential on or off
-settings.rf_voltage = 50;
+settings.rf_voltage = 60;
 settings.rf_frequency = 35e6;
 settings.rf_phase = 0;
-settings.duration = 1e-4; 
+settings.duration = 1e-3;
 settings.time_step = 1e-9; % Not a simulation step, but returned values
 settings.fields = [0,0,0]; % Field potentials in V/m
-settings.curvatures = [0,0,1.2e7/4,0,1e7]; % Curvatures in V/m^2
+settings.curvatures = [0,0,1.2e7/4,0,-1e7]; % Curvatures in V/m^2
 settings.precool = 0; % Boolean. Does a non-physical damping, to help get ions in equilibrium positions
 settings.precool_str = [1e6;1e6;1e6];
-settings.precool_time = 1e-6;
-ion_positions = [-3.1,3.1]*1e-6; % Initial positions along trap axis
+settings.precool_time = 5e-6;
+ion_positions = [-7,-2.2,2.2,7]*1e-6; % Initial positions along trap axis
 % The following finds the RF minimum point of the chosen multipole file.
 % The DC spherical harmonics are build around this point.
-if strcmp(settings.rf_type,'multipoles')
+if strcmp(settings.potential_type,'multipoles')
     minfunc = @(x)sum((get_rf_gradients(x,settings.rf_multipoles).^2));
     settings.min_point = fminunc(minfunc,[0,0,0]);
-elseif strcmp(settings.rf_type,'surface')
-    minfunc = @(x)sum((surf_trap_gradient([100e-6,50e-6,50e-6],x).^2));
+elseif strcmp(settings.potential_type,'surface')
+    minfunc = @(x)sum((surf_trap_rf_gradient(settings.rail_dimensions,x).^2));
     min_point = fminunc(minfunc,[0,70e-6,0]);
     settings.min_point(1) = 0;
     settings.min_point(2) = min_point(2);
     settings.min_point(3) = min_point(1);
+    voltages_matrix = get_electrode_voltages_matrix(settings.dc_electrode_positions,settings.rail_dimensions);
+    settings.dc_voltages = voltages_matrix*[settings.fields';settings.curvatures';];
+    %draw_electrodes(settings.dc_electrode_positions,settings.rail_dimensions,settings.dc_voltages);
+    settings.voltage_noise = filtered_noise(settings);
 end
 
 
@@ -62,10 +70,13 @@ for i = 1:length(ions)
 %     settings.ions(i).start_vel(1) = ion_speeds(1);
 %     settings.ions(i).start_vel(2) = ion_speeds(2);
 %     settings.ions(i).start_vel(3) = ion_speeds(3);
-    settings.ions(i).coupling = 0*25*2*pi*1e6;
-    settings.ions(i).detuning = -22*2*pi*1e6;
+    settings.ions(i).coupling = 25*2*pi*1e6;%200*2*pi*1e6;
+    settings.ions(i).detuning = -22*2*pi*1e6;%-150*2*pi*1e6;
 end
-settings.ions(i).start_vel = [1,1,1]*70;
+settings.ions(1).start_vel = [1,1,1]*50;
+% Get motional frequencies (optional)
+%IonTrajectory_frequencies(settings);
+
 % Starts scan
 [t,y] = IonTrajectory_function(settings);
 % y is a vector that contains [3 positions, 3 velocities, 3 positions, 3

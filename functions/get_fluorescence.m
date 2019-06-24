@@ -2,7 +2,7 @@ function [ total_fluorescence, binned_fluorescence, binned_times ] = get_fluores
 %GET_FLUORESCENCE Summary of this function goes here
 %   Detailed explanation goes here
 max_fluorescence = 50; %Expected fluorescence on resonance;
-binning = 1e-4;
+binning = 1e-5;
 hbar = 1.05457183e-34;
 fluorescence = zeros(length(speeds),length(settings.ions));
 for i = 1:length(settings.ions)

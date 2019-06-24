@@ -20,12 +20,14 @@ for i = 1:no_of_ions
     else
         curvatures = settings.curvatures;
     end
-    dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
     
-    if strcmp(settings.rf_type,'multipoles')
+    if strcmp(settings.potential_type,'multipoles')
         rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
-    elseif strcmp(settings.rf_type,'surface')
-        rf(i,:) = surf_trap_gradient(settings.rail_dimensions,positions(:,i));
+        dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+    elseif strcmp(settings.potential_type,'surface')
+        rf(i,:) = surf_trap_rf_gradient(settings.rail_dimensions,positions(:,i));
+        dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+        dc(i,:) = surf_trap_dc_gradient(positions(:,i),settings.dc_electrode_positions,settings.dc_voltages);
     end
     
     if settings.precool && settings.precool_time > t
@@ -46,3 +48,6 @@ out_mat(1:3,:) = velocities;
 out_mat(4:6,:) = force';
 
 output = out_mat(:);
+if max(abs(positions(:)))>1e-3
+    output = NaN(length(output),1);
+end
