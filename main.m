@@ -3,7 +3,7 @@ addpath('functions\');
 addpath('surface electrodes\');
 
 % Select ion chain
-ions = {'Ca','Ca','Ca','Ca'};
+ions = {'Ca','Ca','Sr'};
 
 % Choose how the RF potential is generated.
 % 'multipole' uses a basis of spherical harmonics
@@ -15,7 +15,7 @@ ions = {'Ca','Ca','Ca','Ca'};
 % For 'surface': define the widths of the electrode rails:
 % [space between rails, width rail 1, width rail 2];
 
-settings.potential_type = 'surface'; %'multipoles' or 'surface'
+settings.potential_type = 'multipoles'; %'multipoles' or 'surface'
 if strcmp(settings.potential_type,'multipoles')
     settings.multipole_file = 'multipoles\multipoles_harmonic.mat';
     load(settings.multipole_file)
@@ -33,14 +33,14 @@ settings.coulomb = 1; %Boolean. Turn coulomb potential on or off
 settings.rf_voltage = 60;
 settings.rf_frequency = 35e6;
 settings.rf_phase = 0;
-settings.duration = 1e-3;
+settings.duration = 1e-5;
 settings.time_step = 1e-9; % Not a simulation step, but returned values
 settings.fields = [0,0,0]; % Field potentials in V/m
-settings.curvatures = [0,0,1.2e7/4,0,-1e7]; % Curvatures in V/m^2
-settings.precool = 0; % Boolean. Does a non-physical damping, to help get ions in equilibrium positions
+settings.curvatures = [0,0,1.2e7/2,0,-1e7]; % Curvatures in V/m^2
+settings.precool = 1; % Boolean. Does a non-physical damping, to help get ions in equilibrium positions
 settings.precool_str = [1e6;1e6;1e6];
 settings.precool_time = 5e-6;
-ion_positions = [-7,-2.2,2.2,7]*1e-6; % Initial positions along trap axis
+ion_positions = [-4.2,0,4.2]*1e-6; % Initial positions along trap axis
 % The following finds the RF minimum point of the chosen multipole file.
 % The DC spherical harmonics are build around this point.
 if strcmp(settings.potential_type,'multipoles')
@@ -73,7 +73,7 @@ for i = 1:length(ions)
     settings.ions(i).coupling = 25*2*pi*1e6;%200*2*pi*1e6;
     settings.ions(i).detuning = -22*2*pi*1e6;%-150*2*pi*1e6;
 end
-settings.ions(1).start_vel = [1,1,1]*50;
+%settings.ions(1).start_vel = [1,1,1]*50;
 % Get motional frequencies (optional)
 %IonTrajectory_frequencies(settings);
 
