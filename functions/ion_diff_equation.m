@@ -37,6 +37,7 @@ for i = 1:no_of_ions
     end
 end    
 rf = rf*settings.rf_voltage*cos(2*pi*settings.rf_frequency*t + settings.rf_phase);
+dc(:,1) = dc(:,1) + 600*cos(2*pi*settings.rf_frequency*t);
 etot = -dc - rf;
 for i = 1:no_of_ions
     force(i,:) = etot(i,:) * settings.ions(i).q / settings.ions(i).m...

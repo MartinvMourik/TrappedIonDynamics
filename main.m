@@ -3,7 +3,7 @@ addpath('functions\');
 addpath('surface electrodes\');
 
 % Select ion chain
-ions = {'Ca','Ca','Sr'};
+ions = {'Ca','Sr','Ca'};
 
 % Choose how the RF potential is generated.
 % 'multipole' uses a basis of spherical harmonics
@@ -27,20 +27,39 @@ elseif strcmp(settings.potential_type,'surface')
     settings.dc_electrode_positions = electrode_positions;
 end
 
+times = linspace(0,1e-4,1001);
+conf = ones(1,length(times));
+min_conf = 1;
+max_field = .6e3;
+conf(1:250) = linspace(1,min_conf,250);
+conf(251:750) = min_conf;
+conf(751:1000) = linspace(min_conf,1,250);
+field = zeros(1,length(times));
+field(251:500) = linspace(0,max_field,250);
+field(501:750) = linspace(max_field,0,250);
+
+
+
+
 
 % The following settings need to be set
 settings.coulomb = 1; %Boolean. Turn coulomb potential on or off
 settings.rf_voltage = 60;
 settings.rf_frequency = 35e6;
 settings.rf_phase = 0;
-settings.duration = 1e-5;
+settings.duration = 1e-3;
 settings.time_step = 1e-9; % Not a simulation step, but returned values
 settings.fields = [0,0,0]; % Field potentials in V/m
 settings.curvatures = [0,0,1.2e7/2,0,-1e7]; % Curvatures in V/m^2
-settings.precool = 1; % Boolean. Does a non-physical damping, to help get ions in equilibrium positions
+settings.precool = 0; % Boolean. Does a non-physical damping, to help get ions in equilibrium positions
 settings.precool_str = [1e6;1e6;1e6];
 settings.precool_time = 5e-6;
 ion_positions = [-4.2,0,4.2]*1e-6; % Initial positions along trap axis
+
+settings.ramp_conf = conf*settings.curvatures(3);
+settings.ramp_field = field;
+settings.times = times;
+
 % The following finds the RF minimum point of the chosen multipole file.
 % The DC spherical harmonics are build around this point.
 if strcmp(settings.potential_type,'multipoles')
@@ -70,15 +89,36 @@ for i = 1:length(ions)
 %     settings.ions(i).start_vel(1) = ion_speeds(1);
 %     settings.ions(i).start_vel(2) = ion_speeds(2);
 %     settings.ions(i).start_vel(3) = ion_speeds(3);
-    settings.ions(i).coupling = 25*2*pi*1e6;%200*2*pi*1e6;
-    settings.ions(i).detuning = -22*2*pi*1e6;%-150*2*pi*1e6;
+    settings.ions(i).coupling = 200*2*pi*1e6;%200*2*pi*1e6;
+    settings.ions(i).detuning = -4*80*2*pi*1e6;%-150*2*pi*1e6;
 end
-%settings.ions(1).start_vel = [1,1,1]*50;
+settings.ions(2).start_vel = [1,1,1]*50;
 % Get motional frequencies (optional)
 %IonTrajectory_frequencies(settings);
 
 % Starts scan
-[t,y] = IonTrajectory_function(settings);
+myFitType = fittype('a*exp(-x/b)+c');
+options = fitoptions(myFitType);
+couplings = 50;
+detunings = 50:50:100;
+for i = 1:length(couplings)
+    for j = 1:length(detunings)
+        for k = 1:length(ions)
+            settings.ions(k).coupling = couplings(i)*2*pi*1e6;%200*2*pi*1e6;
+            settings.ions(k).detuning = -detunings(j)*2*pi*1e6;%-150*2*pi*1e6;
+        end
+        [t,y] = IonTrajectory_function(settings);
+        t_small = t(1:100:end)*1e3;
+        y_small = y(1:100:end);
+        en = get_total_energy(y,settings)/1.06e-19;
+        en_small = en(1:100:end)*1e3;
+        options.StartPoint = [en_small(1),1,0];
+        fitres = fit(t_small,en_small,myFitType,options);
+        decay(i,j) = fitres.b;
+        de = confint(fitres);
+        decay_error(i,j,:) = de(:,2);
+    end
+end
 % y is a vector that contains [3 positions, 3 velocities, 3 positions, 3
 % velocities...] alternating through ions.
 
