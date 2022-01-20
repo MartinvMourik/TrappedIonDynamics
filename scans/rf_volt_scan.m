@@ -1,6 +1,6 @@
 clear
 addpath('..\functions\');
-rf_vals = 10:20:200; %MHz
+rf_vals = 10:20:200;
 ions = {'Ca','Ca'};
 
 settings.multipole_file = '..\multipoles\multipoles_harmonic.mat';

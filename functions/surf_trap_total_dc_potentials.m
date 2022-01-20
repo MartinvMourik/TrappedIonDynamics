@@ -28,7 +28,7 @@ end
 for k = 1:length(settings.ions)
     x = positions(:,k,1);
     y = positions(:,k,2);
-    z = positions(:,k,3);
+    z = positions(:,k,3);   
     for m = 1:length(settings.dc_voltages)
         electrode_potential = zeros(size(potential));
         ecz = sort(electrode_corners(m,[1,2]));

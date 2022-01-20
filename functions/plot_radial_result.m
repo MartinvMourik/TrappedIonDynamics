@@ -27,12 +27,12 @@ function [  ] = plot_radial_result( positions,settings,ion_number )
     full_potential = pot_dc + pot_rf;
     if 1
         figure()
-        contourf(ys,xs,full_potential,50)
+        contourf(xs,ys,full_potential',50)
         xax = get(gca,'XLim');
         yax = get(gca,'YLim');
         hold on
         for i = 1:length(settings.ions)
-            plot(positions(:,i,2),positions(:,i,3))
+            plot(positions(:,i,2),positions(:,i,3),'r')
         end
         axis([xax,yax])
     end

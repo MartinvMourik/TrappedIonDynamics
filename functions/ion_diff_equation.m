@@ -20,13 +20,23 @@ for i = 1:no_of_ions
     else
         curvatures = settings.curvatures;
     end
-    
+
+    if ~isfield(settings,'pseudopotential')
+        settings.pseudopotential = 0;
+    end
     if strcmp(settings.potential_type,'multipoles')
-        rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
-        dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+        if settings.pseudopotential
+            efields = 8*settings.rf_multipoles(9)^2*settings.rf_voltage^2*[0,positions(2,i),positions(3,i)];
+            rf(i,:) = settings.ions(i).q/(4*settings.ions(i).m*(2*pi*settings.rf_frequency)^2)*efields;
+            dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+        else        
+            rf(i,:) = get_rf_gradients( positions(:,i),settings.rf_multipoles);
+            dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+        end
     elseif strcmp(settings.potential_type,'surface')
+        % TODO: include pseudopotential option
         rf(i,:) = surf_trap_rf_gradient(settings.rail_dimensions,positions(:,i));
-        dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
+        %dc(i,:) = create_dc_gradient(positions(:,i),settings.fields,curvatures,settings.min_point);
         dc(i,:) = surf_trap_dc_gradient(positions(:,i),settings.dc_electrode_positions,settings.dc_voltages);
     end
     
@@ -35,9 +45,10 @@ for i = 1:no_of_ions
     else
         damping(i,:) = get_damp_forces(velocities(:,i),settings.ions(i));
     end
-end    
-rf = rf*settings.rf_voltage*cos(2*pi*settings.rf_frequency*t + settings.rf_phase);
-dc(:,1) = dc(:,1) + 600*cos(2*pi*settings.rf_frequency*t);
+end
+if ~settings.pseudopotential
+    rf = rf*settings.rf_voltage*cos(2*pi*settings.rf_frequency*t + settings.rf_phase);
+end
 etot = -dc - rf;
 for i = 1:no_of_ions
     force(i,:) = etot(i,:) * settings.ions(i).q / settings.ions(i).m...

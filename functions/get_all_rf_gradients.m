@@ -1,6 +1,7 @@
 function [ gradients ] = get_all_rf_gradients(positions,settings)
 if strcmp(settings.potential_type,'surface')
-   gradients = surf_trap_rf_gradient_all(settings.rail_dimensions,positions); 
+   gradients = surf_trap_rf_gradient_all(settings.rail_dimensions,positions);
+   gradients = gradients*settings.rf_voltage;
 end
 if strcmp(settings.potential_type,'multipoles')
 
@@ -9,6 +10,7 @@ if strcmp(settings.potential_type,'multipoles')
     y = positions(:,2);
     z = positions(:,3);
     E = zeros(length(positions),25,3);
+
 
     E(:,1,1) = 0;
     E(:,1,2) = 0;
@@ -94,5 +96,6 @@ if strcmp(settings.potential_type,'multipoles')
     for i = 1:25
         gradients = gradients + squeeze(E(:,i,:))*multipole_terms(i);
     end
+    gradients = gradients*settings.rf_voltage;
 end
 

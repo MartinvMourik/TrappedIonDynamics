@@ -8,7 +8,6 @@ for i = 1:length(settings.ions)
     q = settings.ions(i).q;
     mass = settings.ions(i).m;
     fields = get_all_rf_gradients(squeeze(position(:,i,:)),settings);
-    fields = fields*settings.rf_voltage;
     phi(:,i) = q^2/(4*mass*(2*pi*trap_freq)^2)*sum(fields.^2,2);
 end
 

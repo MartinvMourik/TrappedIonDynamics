@@ -1,4 +1,4 @@
-function [ total_fluorescence, binned_fluorescence, binned_times ] = get_fluorescence( speeds,settings )
+function [ total_fluorescence, binned_fluorescence, binned_times, fluorescence] = get_fluorescence( speeds,settings )
 %GET_FLUORESCENCE Summary of this function goes here
 %   Detailed explanation goes here
 max_fluorescence = 50; %Expected fluorescence on resonance;

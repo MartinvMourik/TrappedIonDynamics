@@ -13,3 +13,8 @@ positions(:,:,3) = y(:,positionnumbers+2);
 speeds(:,:,1) = y(:,positionnumbers+3);
 speeds(:,:,2) = y(:,positionnumbers+4);
 speeds(:,:,3) = y(:,positionnumbers+5);
+
+% if strcmp(settings.potential_type,'surface')
+%     positions(:,:,[2,3]) = positions(:,:,[3,2]);
+%     speeds(:,:,[2,3]) = speeds(:,:,[3,2]);
+% end

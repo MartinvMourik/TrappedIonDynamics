@@ -3,7 +3,7 @@ function [ freq ] = IonTrajectory_frequencies( settings )
 %frequencies
 start_vec = zeros(6,1);
 start_vec(1:3) = settings.min_point;
-start_vec(4:6,1) = .1;
+start_vec(4:6,1) = 1;
 
 settings.ions = settings.ions(1);
 settings.duration = 1e-4; 
